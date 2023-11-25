@@ -14,14 +14,14 @@ def video_webm():
     file_name = request.form['file_name']
     webm_url = f"tmp/{file_name}"
     video.save(webm_url)
-    video_url = f"tmp/{'.'.join(file_name.split('.')[:-1])}.mp4"
 
     tmp_url = f"tmp/{uuid.uuid4()}.mp4"
     subprocess.call(
         ['ffmpeg', '-i', webm_url, '-c:v', 'libx264', '-crf', '30', '-b:v', '0', '-c:a', 'copy', '-b:a', '128k',
          tmp_url])
 
-    mp4_url = "https://furiosa-video.s3.ap-northeast-2.amazonaws.com/mp4/" + file_name + ".mp4"
+    mp4_path = f"{'.'.join(file_name.split('.')[:-1])}.mp4"
+    mp4_url = "https://furiosa-video.s3.ap-northeast-2.amazonaws.com/mp4/" + mp4_path
     s3.upload_file(
         Bucket='furiosa-video',
         Filename=tmp_url,
