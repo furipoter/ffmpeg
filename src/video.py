@@ -17,8 +17,17 @@ def video_webm():
 
     tmp_url = f"tmp/{uuid.uuid4()}.mp4"
     subprocess.call(
-        ['ffmpeg', '-i', webm_url, '-c:v', 'libx264', '-crf', '30', '-b:v', '0', '-c:a', 'copy', '-b:a', '128k',
-         tmp_url])
+        [
+            'ffmpeg',
+            '-i', webm_url,
+            '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2',
+            '-c:v', 'libx264',
+            '-crf', '30',
+            '-b:v', '0',
+            '-c:a', 'aac',
+            '-b:a', '128k',
+            tmp_url
+        ])
 
     mp4_path = f"{'.'.join(file_name.split('.')[:-1])}.mp4"
     mp4_url = "https://furiosa-video.s3.ap-northeast-2.amazonaws.com/mp4/" + mp4_path
