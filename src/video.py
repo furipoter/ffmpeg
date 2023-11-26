@@ -13,7 +13,7 @@ def video_mp4(file_name):
     convert_url = f'tmp/{file_name}'
     s3.download_file(
         Bucket='furiosa-video',
-        Key=f'ffmpeg/{file_name}',
+        Key=f'convert/{file_name}',
         Filename=convert_url,
     )
     ffmpeg_local = f'tmp/{uuid.uuid4()}.mp4'
