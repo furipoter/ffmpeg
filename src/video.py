@@ -8,6 +8,32 @@ from app import s3
 router = Blueprint('video', __name__, url_prefix='/video')
 
 
+@router.route('/mp4/<file_name>', methods=['GET'])
+def video_mp4(file_name):
+    convert_url = f'tmp/{file_name}'
+    s3.download_file(
+        Bucket='furiosa-video',
+        Key=f'ffmpeg/{file_name}',
+        Filename=convert_url,
+    )
+    ffmpeg_local = f'tmp/{uuid.uuid4()}.mp4'
+    ffmpeg_url = "https://furiosa-video.s3.ap-northeast-2.amazonaws.com/ffmpeg/" + file_name
+
+    command=f'ffmpeg -i {convert_url} -vcodec libx264 {ffmpeg_local}'
+    # subprocess를 사용하여 명령 실행
+    subprocess.run(command, shell=True)
+    # s3에 업로드
+    s3.upload_file(
+        Bucket='furiosa-video',
+        Filename=ffmpeg_local,
+        Key=f'ffmpeg/{file_name}',
+    )
+    return jsonify({
+        'message': 'success',
+        'ffmpeg_url': ffmpeg_url
+    }), 200
+
+
 @router.route('/webm', methods=['POST'])
 def video_webm():
     video = request.files['video']
