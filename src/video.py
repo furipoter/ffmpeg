@@ -8,7 +8,7 @@ from app import s3
 router = Blueprint('video', __name__, url_prefix='/video')
 
 
-@router.route('/mp4/<file_name>', methods=['GET'])
+@router.route('mp4/<file_name>', methods=['GET'])
 def video_mp4(file_name):
     convert_url = f'tmp/{file_name}'
     s3.download_file(
@@ -34,7 +34,7 @@ def video_mp4(file_name):
     }), 200
 
 
-@router.route('/webm', methods=['POST'])
+@router.route('webm', methods=['POST'])
 def video_webm():
     video = request.files['video']
     file_name = request.form['file_name']
